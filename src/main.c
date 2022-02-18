@@ -4,6 +4,7 @@
 
 #include <config.h>
 #include <core.h>
+#include <plugin.h>
 
 int main(int argc, const char **argv) {
 	struct config_t* config = config_malloc();
