@@ -3,7 +3,7 @@
 
 #include <config.h>
 
-typedef void (*plugin_func)(void*);
+typedef void* (*plugin_func)(void*);
 struct plugin_t;
 
 void plugin_ctor(struct plugin_t*, struct config_t*);

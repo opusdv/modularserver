@@ -1,22 +1,31 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <config.h>
+#include <sys/socket.h>
 
 typedef struct {
-	void* (*pf)(void*);
+	void* (*func)(void*);
 } plugin_t;
 
 void* __plugin_default_func(void* arg) {
-	return arg;
+	int* num = (int*)arg;
+	printf("%d\n", num);
+	int client_sd = *num;
 	
+	while(1) {
+		send(client_sd, "Hi\n", 3, 0);
+		break;
+	}
+
+	return arg;
 }
 
 void plugin_ctor(plugin_t* plugin, void* config) {
 	struct config_t* conf = (struct config_t*)config;
 	if (config_get_plug(conf)) {
-		plugin->pf = NULL;
+		plugin->func = __plugin_default_func;
 	} else {
-		plugin->pf = __plugin_default_func;
+		plugin->func = __plugin_default_func;
 	}
 }
 
@@ -28,7 +37,7 @@ plugin_t* plugin_malloc() {
 	return (plugin_t*)malloc(sizeof(plugin_t));
 }
 
-void* (*plugin_get_func(void*))(plugin_t* plugin) {
-	
+void* (*plugin_get_func(plugin_t* plugin))(void*) {
+	return plugin->func;
 }
 

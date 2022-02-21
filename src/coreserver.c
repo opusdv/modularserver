@@ -43,7 +43,7 @@ void coreserver_set_connection(coreserver_t* coreserver, void* connection) {
 void coreserver_set_plugin(coreserver_t* coreserver, void* plugin) {
 	struct plugin_t* plug = (struct plugin_t*)plugin;
 	
-	coreserver->plugin;
+	coreserver->plugin = plug;
 }
 
 void __coreserver_connection_listen(int socket_sd, int client_count) {
@@ -56,7 +56,7 @@ void __coreserver_connection_listen(int socket_sd, int client_count) {
 	printf("Socket listen success\n");
 }
 
-void __coreserver_connection_accept(int socket_sd, struct config_t*) {
+void __coreserver_connection_accept(int socket_sd, struct plugin_t* plugin) {
 	printf("Connection wait......\n");
 	while (1) {
 		int client_sd = accept(socket_sd, NULL, NULL);
@@ -66,22 +66,22 @@ void __coreserver_connection_accept(int socket_sd, struct config_t*) {
 		}
 
 		printf("Client accept success\n");
+		
+		void* (*func)(void*) = plugin_get_func(plugin);
+		
+		int* cd = &client_sd;
+		func(cd);
 
-		while(1) {
-			send(client_sd, "Hi\n", 3, 0);
-			break;
-		}
 		break;
 	}
 }
 
 void coreserver_connectin_start(coreserver_t* coreserver) {
 	struct connection_t* conn = (struct connection_t*)coreserver->connection;
+	struct plugin_t* plug = (struct plugin_t*)coreserver->plugin;
 	struct config_t* conf = coreserver->config;
 	int server_sd = connection_get_server_sd(conn);
 
-	printf("%d\n", server_sd);
-
 	__coreserver_connection_listen(server_sd, 1);
-	__coreserver_connection_accept(server_sd, conf);
+	__coreserver_connection_accept(server_sd, plug);
 }
