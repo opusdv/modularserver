@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <config.h>
 
 typedef struct {
@@ -26,3 +27,8 @@ void plugin_dror(plugin_t* plugin) {
 plugin_t* plugin_malloc() {
 	return (plugin_t*)malloc(sizeof(plugin_t));
 }
+
+void* (*plugin_get_func(void*))(plugin_t* plugin) {
+	
+}
+
