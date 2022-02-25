@@ -1,7 +1,9 @@
 #include <stdlib.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <config.h>
 #include <sys/socket.h>
+#include <dlfcn.h>
 
 typedef struct {
 	void* (*func)(void*);
@@ -23,7 +25,17 @@ void* __plugin_default_func(void* arg) {
 void plugin_ctor(plugin_t* plugin, void* config) {
 	struct config_t* conf = (struct config_t*)config;
 	if (config_get_plug(conf)) {
-		plugin->func = __plugin_default_func;
+		void *hdl = dlopen("./lib/libtest.so", RTLD_LAZY);
+		if (hdl == NULL) {
+			perror("dlopen");
+			exit(1);
+		}
+		plugin->func = (void* (*)(void*))dlsym(hdl, "plugin_func");
+		if (plugin->func == NULL) {
+			perror("dlsyn");
+			exit(1);
+		}
+		
 	} else {
 		plugin->func = __plugin_default_func;
 	}

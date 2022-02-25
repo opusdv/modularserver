@@ -16,7 +16,8 @@ void config_ctor(config_t* config) {
 	if (port_from_env == NULL) {
 		config->port = 2626;
 	}
-	config->plug = false;
+	
+	config->plug = true;
 }
 
 void config_dtor(config_t* config) {

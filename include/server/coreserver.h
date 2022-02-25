@@ -17,6 +17,4 @@ void coreserver_set_connection(struct coreserver_t*, struct connection_t*);
 void coreserver_set_plugin(struct coreserver_t*,  struct plugin_t*);
 void coreserver_connectin_start(struct coreserver_t*);
 
-
-
 #endif
